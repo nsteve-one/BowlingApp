@@ -63,6 +63,7 @@ namespace BowlingApp
 
         }
 
+        //Fills in each label and textbox with "--"
         private void Form1_Load(object sender, EventArgs e)
         {
             foreach(var lbl in LabelsTop) { lbl.Text = "--"; }
@@ -70,6 +71,7 @@ namespace BowlingApp
             foreach (var txtb in TextBoxes) { txtb.Text = "--"; }
         }
 
+        //Executed when Bowl Button is clicked
         private void btnBowl_Click(object sender, EventArgs e)
         {
             if (isFirstRoll)
