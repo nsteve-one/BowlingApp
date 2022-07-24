@@ -2,6 +2,7 @@ using System.Diagnostics;
 
 namespace BowlingApp
 {
+    //Holds the scores for each frame
     struct Frame
     {
         private bool _isStrike;
@@ -97,7 +98,7 @@ namespace BowlingApp
 
         }
 
-        //Fills in each label and textbox with "--"
+        //Fills in each label and textbox with "--" and also sets the runningTotals array
         private void Form1_Load(object sender, EventArgs e)
         {
             foreach (var lbl in LabelsTop) { lbl.Text = "--"; }
@@ -169,7 +170,7 @@ namespace BowlingApp
 
             switch (currentFrame)
             {
-                case NINTH_FRAME:
+                case NINTH_FRAME: //Populates the rolls of the ninth frame
                     if (!thisFrame.isStrike && !thisFrame.isSpare)
                     {
                         if (isFirstRoll)
@@ -189,15 +190,15 @@ namespace BowlingApp
                             TextBoxes[currentFrame + 1].Text = SPARE;
                     }
                     break;
-                case FINAL_FRAME:
+                case FINAL_FRAME: //Populates the rolls of the final frame
                     Frame previousFrame = frames[currentFrame - 1];
-                    if (previousFrame.isSpare || previousFrame.isStrike)
+                    if (previousFrame.isSpare || previousFrame.isStrike) //only needed when a strike or a spare comes before this frame
                         DisplayFrame10Rolls();
                     break;
-                case NEED_EXTRA_FINAL_FRAME:
+                case NEED_EXTRA_FINAL_FRAME: //Popolates rolls for an extra frame if needed
                     DisplayFrame11Rolls();
                     break;
-                default:
+                default: //Populates rolls for ever other frame except the ones above
                     switch ((thisFrame.isStrike, thisFrame.isSpare))
                     {
                         case (true, false):
