@@ -77,8 +77,8 @@ namespace BowlingApp
             if (isFirstRoll)
             {
                 Roll();
-                DisplayRoll(currentFrame, isFirstRoll);
-                DisplayRolls();
+                DisplayCurrentRoll(currentFrame, isFirstRoll);
+                PopulateRolls();
                 if (frames[currentFrame].isStrike)
                 {
                     currentFrame++;
@@ -94,8 +94,8 @@ namespace BowlingApp
 
             else
             {
-                DisplayRoll(currentFrame, isFirstRoll);
-                DisplayRolls();
+                DisplayCurrentRoll(currentFrame, isFirstRoll);
+                PopulateRolls();
                 currentFrame++;
                 isFirstRoll = true;
                 DisplayTotalScore(currentFrame - 1);
@@ -128,7 +128,7 @@ namespace BowlingApp
         }
 
         //Displays each individual role on the top sode of the scoring sheet
-        private void DisplayRolls()
+        private void PopulateRolls()
         {
             Frame thisFrame = frames[currentFrame]; 
             //Frame lastFrame = frames[currentFrame - 1];
@@ -413,7 +413,7 @@ namespace BowlingApp
         }
 
         //Displays current roll on label when button is pressed
-        private void DisplayRoll(int frame, bool isFirstRoll)
+        private void DisplayCurrentRoll(int frame, bool isFirstRoll)
         {
             if (frames[currentFrame].isStrike)
                 lblDisplayScore.Text = "Strike!";
