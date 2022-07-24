@@ -462,7 +462,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "BowlingGame";
-            this.Text = "Form1";
+            this.Text = "Bowling Game";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tlpScores.ResumeLayout(false);
             this.tlpScores.PerformLayout();
