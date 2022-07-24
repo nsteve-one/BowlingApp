@@ -5,6 +5,7 @@ namespace BowlingApp
 {
     struct Frame
     {
+        //make getter and setters NO PUBLIC
         public bool isStrike;
         public bool isSpare;
         public int score1;
@@ -22,19 +23,24 @@ namespace BowlingApp
         }
     }
 
+    //make calculating and populating scores different
     public partial class Form1 : Form
     {
-        public const int MAX_PINS = 10;
-        int currentFrame;
-        bool isFirstRoll;
-        string strike;
-        string spare;
+        private const int NINTH_FRAME = 9;
+        private const int FINAL_FRAME = 10;
+        private const int NEED_EXTRA_FINAL_FRAME = 11;
+        private const int MAX_PINS = 10;
 
-        List<Label> LabelsTop;
-        List<Label> LabelsBottom;
-        List<TextBox> TextBoxes;
-        Frame[] frames;
-        Random random;
+        private int currentFrame;
+        private bool isFirstRoll;
+        private string strike;
+        private string spare;
+
+        private List<Label> LabelsTop;
+        private List<Label> LabelsBottom;
+        private List<TextBox> TextBoxes;
+        private Frame[] frames;
+        private Random random;
         public Form1()
         {
             InitializeComponent();
@@ -129,20 +135,20 @@ namespace BowlingApp
         //Displays each individual role on the top sode of the scoring sheet
         private void PopulateRolls()
         {
-            Frame thisFrame = frames[currentFrame]; 
-            //Frame lastFrame = frames[currentFrame - 1];
+            Frame thisFrame = frames[currentFrame];
+            //Frame previousFrame = frames[currentFrame - 1];
 
             switch (currentFrame)
             {
-                case 9:
+                case NINTH_FRAME:
                     DisplayFrame9Rolls();
                     break;
-                case 10:
-                    Frame lastFrame = frames[currentFrame - 1];
-                    if (lastFrame.isSpare || lastFrame.isStrike)
+                case FINAL_FRAME:
+                    Frame previousFrame = frames[currentFrame - 1];
+                    if (previousFrame.isSpare || previousFrame.isStrike)
                         DisplayFrame10Rolls();
                     break;
-                case 11:
+                case NEED_EXTRA_FINAL_FRAME:
                     DisplayFrame11Rolls();
                     break;
                 default:
@@ -175,7 +181,7 @@ namespace BowlingApp
         private void DisplayFrame9Rolls()
         {
             Frame thisFrame = frames[currentFrame];
-            Frame lastFrame = frames[currentFrame - 1];
+            //Frame previousFrame = frames[currentFrame - 1];
 
             switch ((thisFrame.isStrike, thisFrame.isSpare))
             {
@@ -203,11 +209,11 @@ namespace BowlingApp
         private void DisplayFrame10Rolls()
         {
             Frame thisFrame = frames[currentFrame];
-            Frame lastFrame = frames[currentFrame - 1];
+            Frame previousFrame = frames[currentFrame - 1];
 
             if (thisFrame.isStrike)
             {
-                if (lastFrame.isStrike)
+                if (previousFrame.isStrike)
                 {
                     TextBoxes[currentFrame].Text = strike;
                 }
@@ -219,10 +225,10 @@ namespace BowlingApp
 
             if (thisFrame.isSpare)
             {
-                if (!lastFrame.isStrike)
+                if (!previousFrame.isStrike)
                     TextBoxes[currentFrame + 1].Text = thisFrame.score1.ToString();
 
-                if (lastFrame.isStrike)
+                if (previousFrame.isStrike)
                 {
                     if (isFirstRoll)
                         TextBoxes[currentFrame].Text = thisFrame.score1.ToString();
@@ -233,14 +239,14 @@ namespace BowlingApp
 
             if (!thisFrame.isStrike && !thisFrame.isSpare)
             {
-                if (!lastFrame.isSpare)
+                if (!previousFrame.isSpare)
                 {
                     if (isFirstRoll)
                         TextBoxes[currentFrame].Text = thisFrame.score1.ToString();
                     else
                         TextBoxes[currentFrame + 1].Text = thisFrame.score2.ToString();
                 }
-                if (lastFrame.isSpare)
+                if (previousFrame.isSpare)
                 {
                     TextBoxes[currentFrame + 1].Text = thisFrame.score1.ToString();
                 }
@@ -251,10 +257,10 @@ namespace BowlingApp
         private void DisplayFrame11Rolls()
         {
             Frame thisFrame = frames[currentFrame];
-            Frame lastFrame = frames[currentFrame - 1];
+            Frame previousFrame = frames[currentFrame - 1];
 
 
-            if (lastFrame.isStrike && thisFrame.isStrike)
+            if (previousFrame.isStrike && thisFrame.isStrike)
                 {
                     TextBoxes[currentFrame].Text = strike;
                 }
@@ -270,14 +276,15 @@ namespace BowlingApp
             int newScore;
 
             Frame thisFrame = frames[currentFrame];
-            Frame lastFrame = new Frame();
+            Frame previousFrame = new Frame();
             if ((currentFrame -1) >= 0)
-                lastFrame = frames[currentFrame - 1];
+                previousFrame = frames[currentFrame - 1];
 
             if (currentFrame == -1)
                 return;
 
-            if(currentFrame == 11)
+            //Populate score total for 11th frame (must have had two strikes on the 10th frame)
+            if(currentFrame == NEED_EXTRA_FINAL_FRAME)
             {
                 if (thisFrame.isStrike)
                 {
@@ -291,9 +298,9 @@ namespace BowlingApp
                 }
                 return;
             }
-            else if(currentFrame == 10)
+            else if(currentFrame == FINAL_FRAME) //Populate total score for final frame
             {
-                if (lastFrame.isStrike)
+                if (previousFrame.isStrike)
                 {
                     if (frames[currentFrame - 2].isStrike)
                     {
@@ -325,7 +332,7 @@ namespace BowlingApp
 
                 }
 
-                if (lastFrame.isSpare)
+                if (previousFrame.isSpare)
                 {
                     if (thisFrame.isStrike)
                     {
@@ -343,7 +350,7 @@ namespace BowlingApp
 
             if (currentFrame - 2 >= 0)
             {
-                if(frames[currentFrame - 2].isStrike && lastFrame.isStrike)
+                if(frames[currentFrame - 2].isStrike && previousFrame.isStrike)
                 {
                     if(thisFrame.isStrike)//three strikes (turkey)
                     {
@@ -365,7 +372,7 @@ namespace BowlingApp
 
             if (currentFrame - 1 >= 0)
             {
-                if(lastFrame.isStrike)
+                if(previousFrame.isStrike)
                 {
                     if (thisFrame.isSpare)//strike and then a spare
                     {
@@ -378,7 +385,7 @@ namespace BowlingApp
                         LabelsBottom[currentFrame - 1].Text = newScore.ToString();
                     }
                 }
-                else if(lastFrame.isSpare)
+                else if(previousFrame.isSpare)
                 {
                     if (thisFrame.isStrike) //spare and then a strike
                     {
