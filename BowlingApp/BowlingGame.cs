@@ -461,8 +461,8 @@ namespace BowlingApp
         {
             int firstRoll, secondRoll;
 
-            firstRoll = Int32.Parse(txtDebug.Text); //forDebug
-            //firstRoll = GenerateScore(MAX_PINS);
+            //firstRoll = Int32.Parse(txtDebug.Text); //forDebug
+            firstRoll = GenerateScore(MAX_PINS);
             Debug.WriteLine(firstRoll);
             if (firstRoll == MAX_PINS)
             {
