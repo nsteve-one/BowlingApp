@@ -2,55 +2,10 @@ using System.Diagnostics;
 
 namespace BowlingApp
 {
+    //missing a class called player and game
+
     //Holds the scores for each frame
-    struct Frame
-    {
-        private bool _isStrike;
-        private bool _isSpare;
-        private bool _isDone;
-        private int _score1;
-        private int _score2;
-
-        public bool isStrike
-        {
-            get { return _isStrike; }
-            set { _isStrike = value; }
-        }
-
-        public bool isSpare
-        {
-            get { return _isSpare; }
-            set { _isSpare = value; }
-        }
-
-        public bool isDone
-        {
-            get { return _isDone; }
-            set { _isDone = value; }
-        }
-
-        public int score1
-        {
-            get { return _score1; }
-            set { _score1 = value; }
-        }
-
-        public int score2
-        {
-            get { return _score2; }
-            set { _score2 = value; }
-        }
-
-        public Frame()
-        {
-            _isStrike = false;
-            _isSpare = false;
-            _isDone = false;
-            _score1 = -1;
-            _score2 = -1;
-
-        }
-    }
+    
 
     //make calculating and populating scores different
     public partial class BowlingGame : Form
@@ -312,8 +267,7 @@ namespace BowlingApp
             if (currentFrame == -1)
                 return;
 
-            //Populate score total for 11th frame (must have had two strikes on the 10th frame)
-            if (currentFrame == NEED_EXTRA_FINAL_FRAME)
+            if (currentFrame == NEED_EXTRA_FINAL_FRAME) //Populate score total for 11th frame (must have had two strikes on the 10th frame)
             {
                 if (thisFrame.isStrike)
                 {
