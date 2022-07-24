@@ -91,7 +91,6 @@ namespace BowlingApp
                     isFirstRoll = false;
                 }
             }
-
             else
             {
                 DisplayCurrentRoll(currentFrame, isFirstRoll);
