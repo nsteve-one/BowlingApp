@@ -9,7 +9,6 @@ namespace BowlingApp
         public bool isSpare;
         public int score1;
         public int score2;
-        public int bonusScore;
         public bool isDone;
 
         public Frame()
@@ -18,13 +17,11 @@ namespace BowlingApp
             isSpare = false;
             score1 = -1;
             score2 = -1;
-            bonusScore = -1;
             isDone = false;
             
         }
     }
 
-    
     public partial class Form1 : Form
     {
         public const int MAX_PINS = 10;
@@ -42,14 +39,18 @@ namespace BowlingApp
         {
             InitializeComponent();
             
+            //Labels on the top of the scoring sheet (next to Text Boxes); display initial roll
             LabelsTop = new List<Label> { lblScore1_1,lblScore2_1, lblScore3_1, lblScore4_1, 
                 lblScore5_1, lblScore6_1, lblScore7_1, lblScore8_1, lblScore9_1};
 
+            //Text Boxes on the top of the scoring sheet; display second roll and all frame-10 rolls
+            TextBoxes = new List<TextBox> { txtboxScore1, txtboxScore2, txtboxScore3,txtboxScore4, txtboxScore5,
+                txtboxScore6, txtboxScore7, txtboxScore8, txtboxScore9, txtboxScore10_1, txtboxScore10_2, txtboxScore10_3 };
+
+            //Show total score
             LabelsBottom = new List<Label> { lblScore1_2, lblScore2_2, lblScore3_2, lblScore4_2, lblScore5_2,
             lblScore6_2, lblScore7_2, lblScore8_2, lblScore9_2, lblScore10};
 
-            TextBoxes = new List<TextBox> { txtboxScore1, txtboxScore2, txtboxScore3,txtboxScore4, txtboxScore5,
-                txtboxScore6, txtboxScore7, txtboxScore8, txtboxScore9, txtboxScore10_1, txtboxScore10_2, txtboxScore10_3 };
 
             currentFrame = 0;
             isFirstRoll = true;
@@ -71,36 +72,36 @@ namespace BowlingApp
 
         private void btnBowl_Click(object sender, EventArgs e)
         {
-            switch (isFirstRoll)
+            if (isFirstRoll)
             {
-                case true:
-                    Bowl();
-                    DisplayRoll(currentFrame, isFirstRoll);
-                    DisplayRolls();
-                    if (frames[currentFrame].isStrike)
-                    {
-                        currentFrame++;
-                        isFirstRoll = true;
-                        DisplayTotalScore(currentFrame-1);
-
-                    }
-                    else
-                    {
-                        isFirstRoll = false;
-                    }
-                    break;
-
-                case false:
-                    DisplayRoll(currentFrame, isFirstRoll);
-                    DisplayRolls();
+                Roll();
+                DisplayRoll(currentFrame, isFirstRoll);
+                DisplayRolls();
+                if (frames[currentFrame].isStrike)
+                {
                     currentFrame++;
                     isFirstRoll = true;
-                    DisplayTotalScore(currentFrame-1);
-                    break;
+                    DisplayTotalScore(currentFrame - 1);
+
+                }
+                else
+                {
+                    isFirstRoll = false;
+                }
+            }
+
+            else
+            {
+                DisplayRoll(currentFrame, isFirstRoll);
+                DisplayRolls();
+                currentFrame++;
+                isFirstRoll = true;
+                DisplayTotalScore(currentFrame - 1);
             }
             
 
             //Debug.WriteLine(currentFrame);
+            //Ends game after final frames)
             if (currentFrame == 10 && !(frames[currentFrame - 1].isSpare || frames[currentFrame - 1].isStrike))
             {
                 lblDisplayScore.Text = "All Done!";
@@ -118,11 +119,13 @@ namespace BowlingApp
             }
         }
 
-        private int GetScore(int numPinsLeft)
+        //Generates random score between 0 and number passed into function
+        private int GenerateScore(int numPinsLeft)
         {
             return random.Next(0, numPinsLeft + 1);
         }
 
+        //Displays each individual role on the top sode of the scoring sheet
         private void DisplayRolls()
         {
             Frame thisFrame = frames[currentFrame]; 
@@ -167,6 +170,7 @@ namespace BowlingApp
             }
         }
 
+        //Logic for displaying Frame 9 rolls
         private void DisplayFrame9Rolls()
         {
             Frame thisFrame = frames[currentFrame];
@@ -194,6 +198,7 @@ namespace BowlingApp
             }
         }
 
+        //Logic for displaying Frame 10 rolls
         private void DisplayFrame10Rolls()
         {
             Frame thisFrame = frames[currentFrame];
@@ -241,6 +246,7 @@ namespace BowlingApp
             }
         }
 
+        //Logic for displaying Frame 11 rolls - Only occurs when there are two strikes on frame 10
         private void DisplayFrame11Rolls()
         {
             Frame thisFrame = frames[currentFrame];
@@ -257,6 +263,7 @@ namespace BowlingApp
                 }
         }
 
+        //Calculates and displays scores on bottom side of scoring sheet
         private void DisplayTotalScore(int currentFrame)
         {
             int newScore;
@@ -389,6 +396,7 @@ namespace BowlingApp
             
         }
 
+        //Calculates sum of all previous scores
         private int currentScoreSum()
         {
             int runningScore = 0;
@@ -402,6 +410,7 @@ namespace BowlingApp
             return runningScore;
         }
 
+        //Displays current roll on label when button is pressed
         private void DisplayRoll(int frame, bool isFirstRoll)
         {
             if (frames[currentFrame].isStrike)
@@ -417,12 +426,13 @@ namespace BowlingApp
 
         }
 
-        private void Bowl()
+        //Roll's the balls and populates the frames
+        private void Roll()
         {
             int firstRoll, secondRoll;
 
-            firstRoll = Int32.Parse(txtDebug.Text);
-            //firstRoll = GetScore(MAX_PINS);
+            //firstRoll = Int32.Parse(txtDebug.Text);
+            firstRoll = GenerateScore(MAX_PINS);
             Debug.WriteLine(firstRoll);
             if (firstRoll == MAX_PINS)
             {
@@ -432,7 +442,7 @@ namespace BowlingApp
             else
             {
                 frames[currentFrame].score1 = firstRoll;
-                secondRoll = GetScore(MAX_PINS - firstRoll);
+                secondRoll = GenerateScore(MAX_PINS - firstRoll);
                 Debug.WriteLine(secondRoll);
                 if ((firstRoll + secondRoll) == MAX_PINS)
                 {
