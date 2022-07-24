@@ -5,46 +5,76 @@ namespace BowlingApp
 {
     struct Frame
     {
-        //make getter and setters NO PUBLIC
-        public bool isStrike;
-        public bool isSpare;
-        public int score1;
-        public int score2;
-        public bool isDone;
+        private bool _isStrike;
+        private bool _isSpare;
+        private bool _isDone;
+        private int _score1;
+        private int _score2;
+
+        public bool isStrike
+        {
+            get { return _isStrike; }
+            set { _isStrike = value; }
+        }
+
+        public bool isSpare
+        {
+            get { return _isSpare; }
+            set { _isSpare = value; }
+        }
+
+        public bool isDone
+        {
+            get { return _isDone; }
+            set { _isDone = value; }
+        }
+
+        public int score1
+        {
+            get { return _score1;}
+            set { _score1 = value; }
+        }
+
+        public int score2
+        {
+            get { return _score2; }
+            set { _score2 = value; }
+        }
 
         public Frame()
         {
-            isStrike = false;
-            isSpare = false;
-            score1 = -1;
-            score2 = -1;
-            isDone = false;
+            _isStrike = false;
+            _isSpare = false;
+            _isDone = false;
+            _score1 = -1;
+            _score2 = -1;
             
         }
     }
 
     //make calculating and populating scores different
-    public partial class Form1 : Form
+    public partial class BowlingGame : Form
     {
         private const int NINTH_FRAME = 9;
         private const int FINAL_FRAME = 10;
         private const int NEED_EXTRA_FINAL_FRAME = 11;
         private const int MAX_PINS = 10;
+        private const string STRIKE = "X";
+        private const string SPARE = "/";
 
         private int currentFrame;
         private bool isFirstRoll;
-        private string strike;
-        private string spare;
+        
 
         private List<Label> LabelsTop;
         private List<Label> LabelsBottom;
         private List<TextBox> TextBoxes;
         private Frame[] frames;
         private Random random;
-        public Form1()
+        public BowlingGame()
         {
             InitializeComponent();
-            
+
             //Labels on the top of the scoring sheet (next to Text Boxes); display initial roll
             LabelsTop = new List<Label> { lblScore1_1,lblScore2_1, lblScore3_1, lblScore4_1, 
                 lblScore5_1, lblScore6_1, lblScore7_1, lblScore8_1, lblScore9_1};
@@ -60,8 +90,6 @@ namespace BowlingApp
 
             currentFrame = 0;
             isFirstRoll = true;
-            strike = "X";
-            spare = "/";
 
 
             frames = new Frame[12];
@@ -155,14 +183,14 @@ namespace BowlingApp
                     switch ((thisFrame.isStrike, thisFrame.isSpare))
                     {
                         case (true, false):
-                            TextBoxes[currentFrame].Text = strike;
+                            TextBoxes[currentFrame].Text = STRIKE;
                             break;
 
                         case (false, true):
                             if (isFirstRoll)
                                 LabelsTop[currentFrame].Text = thisFrame.score1.ToString();
                             else
-                                TextBoxes[currentFrame].Text = spare;
+                                TextBoxes[currentFrame].Text = SPARE;
                             break;
 
                         case (false, false):
@@ -186,14 +214,14 @@ namespace BowlingApp
             switch ((thisFrame.isStrike, thisFrame.isSpare))
             {
                 case (true, false):
-                    TextBoxes[currentFrame].Text = strike;
+                    TextBoxes[currentFrame].Text = STRIKE;
                     break;
 
                 case (false, true):
                     if (isFirstRoll)
                         TextBoxes[currentFrame].Text = thisFrame.score1.ToString();
                     else
-                        TextBoxes[currentFrame + 1].Text = spare;
+                        TextBoxes[currentFrame + 1].Text = SPARE;
                     break;
 
                 case (false, false):
@@ -215,11 +243,11 @@ namespace BowlingApp
             {
                 if (previousFrame.isStrike)
                 {
-                    TextBoxes[currentFrame].Text = strike;
+                    TextBoxes[currentFrame].Text = STRIKE;
                 }
                 else
                 {
-                    TextBoxes[currentFrame + 1].Text = strike;
+                    TextBoxes[currentFrame + 1].Text = STRIKE;
                 }
             }
 
@@ -233,7 +261,7 @@ namespace BowlingApp
                     if (isFirstRoll)
                         TextBoxes[currentFrame].Text = thisFrame.score1.ToString();
                     else
-                        TextBoxes[currentFrame + 1].Text = spare;
+                        TextBoxes[currentFrame + 1].Text = SPARE;
                 }
             }
 
@@ -262,7 +290,7 @@ namespace BowlingApp
 
             if (previousFrame.isStrike && thisFrame.isStrike)
                 {
-                    TextBoxes[currentFrame].Text = strike;
+                    TextBoxes[currentFrame].Text = STRIKE;
                 }
                 if (!thisFrame.isStrike)
                 {

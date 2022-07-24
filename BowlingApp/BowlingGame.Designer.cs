@@ -1,6 +1,6 @@
 ﻿namespace BowlingApp
 {
-    partial class Form1
+    partial class BowlingGame
     {
         /// <summary>
         ///  Required designer variable.
