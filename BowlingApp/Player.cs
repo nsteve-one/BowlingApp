@@ -61,7 +61,7 @@ namespace BowlingApp
             return random.Next(0, numPinsLeft + 1);
         }
 
-        public void Bowl() //Need to make logic for Bonus scores here, so I can simplify the Score calculator
+        public void Bowl() //Need to make logic for Bonus scores here, so I can simplify or delete the Score calculator
         {
             roll1 = GenerateScore(MAX_PINS);
             Debug.WriteLine(roll1);

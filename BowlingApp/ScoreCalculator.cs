@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BowlingApp
 {
-    internal class ScoreCalculator
+    internal class ScoreCalculator //will need heavily modified once Player Bowl() is better utilized
     {
         private const int NINTH_FRAME = 9;
         private const int FINAL_FRAME = 10;
@@ -59,7 +59,7 @@ namespace BowlingApp
             return totalScore;
         }
 
-        private void calculateScores(int currentFrame)
+        private void calculateScores(int currentFrame) //Very manual, not *amazing* code
         {
             Frame thisFrame = _frames[currentFrame];
             Frame previousFrame = new Frame();
