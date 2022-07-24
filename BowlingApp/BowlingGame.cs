@@ -343,7 +343,7 @@ namespace BowlingApp
                         else //Two strikes and two rolls
                         {
                             runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1;
-                            runningTotals[currentFrame - -1] = currentScoreSum() + 10 + thisFrame.score1 + thisFrame.score2;
+                            runningTotals[currentFrame - 1] = currentScoreSum() + 10 + thisFrame.score1 + thisFrame.score2;
                         }
                     } //
                     else if (thisFrame.isSpare) //strike and then a spare
@@ -401,7 +401,7 @@ namespace BowlingApp
                     }
                     else if (!thisFrame.isStrike) //strike and then no spare or strike
                     {
-                        runningTotals[currentFrame - 1] = currentScoreSum() + 10 + thisFrame.score1 + thisFrame.score2;
+                        runningTotals[currentFrame - 1] = currentScoreSum() + 10 + thisFrame.score1;
                     }
                 }
                 else if (previousFrame.isSpare) //last frame is a spare
@@ -460,8 +460,8 @@ namespace BowlingApp
         {
             int firstRoll, secondRoll;
 
-            //firstRoll = Int32.Parse(txtDebug.Text); //forDebug
-            firstRoll = GenerateScore(MAX_PINS);
+            firstRoll = Int32.Parse(txtDebug.Text); //forDebug
+            //firstRoll = GenerateScore(MAX_PINS);
             Debug.WriteLine(firstRoll);
             if (firstRoll == MAX_PINS)
             {
