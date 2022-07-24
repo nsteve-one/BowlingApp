@@ -70,6 +70,7 @@ namespace BowlingApp
         private List<Label> LabelsBottom;
         private List<TextBox> TextBoxes;
         private Frame[] frames;
+        private int[] runningTotals;
         private Random random;
         public BowlingGame()
         {
@@ -91,7 +92,7 @@ namespace BowlingApp
             currentFrame = 0;
             isFirstRoll = true;
 
-
+            runningTotals = new int[10];
             frames = new Frame[12];
             random = new Random();
 
@@ -100,9 +101,10 @@ namespace BowlingApp
         //Fills in each label and textbox with "--"
         private void Form1_Load(object sender, EventArgs e)
         {
-            foreach(var lbl in LabelsTop) { lbl.Text = "--"; }
+            foreach (var lbl in LabelsTop) { lbl.Text = "--"; }
             foreach (var lbl in LabelsBottom) { lbl.Text = "--"; }
             foreach (var txtb in TextBoxes) { txtb.Text = "--"; }
+            for (int i = 0; i < runningTotals.Length; i++) { runningTotals[i] = -1; }
         }
 
         //Executed when Bowl Button is clicked
@@ -117,7 +119,7 @@ namespace BowlingApp
                 {
                     currentFrame++;
                     isFirstRoll = true;
-                    PopulateScoreTotals(currentFrame - 1);
+                    populateTotalScores();
 
                 }
                 else
@@ -131,7 +133,7 @@ namespace BowlingApp
                 PopulateRolls();
                 currentFrame++;
                 isFirstRoll = true;
-                PopulateScoreTotals(currentFrame - 1);
+                populateTotalScores();
             }
             
 
@@ -169,7 +171,24 @@ namespace BowlingApp
             switch (currentFrame)
             {
                 case NINTH_FRAME:
-                    DisplayFrame9Rolls();
+                    if (!thisFrame.isStrike && !thisFrame.isSpare)
+                    {
+                        if (isFirstRoll)
+                            TextBoxes[currentFrame].Text = thisFrame.score1.ToString();
+                        else
+                            TextBoxes[currentFrame + 1].Text = thisFrame.score2.ToString();
+                    }
+                    else if (thisFrame.isStrike)
+                    {
+                        TextBoxes[currentFrame].Text = STRIKE;
+                    }
+                    else if (thisFrame.isSpare)
+                    {
+                        if (isFirstRoll)
+                            TextBoxes[currentFrame].Text = thisFrame.score1.ToString();
+                        else
+                            TextBoxes[currentFrame + 1].Text = SPARE;
+                    }
                     break;
                 case FINAL_FRAME:
                     Frame previousFrame = frames[currentFrame - 1];
@@ -202,34 +221,6 @@ namespace BowlingApp
                     }
                     break;
 
-            }
-        }
-
-        //Logic for displaying Frame 9 rolls
-        private void DisplayFrame9Rolls()
-        {
-            Frame thisFrame = frames[currentFrame];
-            //Frame previousFrame = frames[currentFrame - 1];
-
-            switch ((thisFrame.isStrike, thisFrame.isSpare))
-            {
-                case (true, false):
-                    TextBoxes[currentFrame].Text = STRIKE;
-                    break;
-
-                case (false, true):
-                    if (isFirstRoll)
-                        TextBoxes[currentFrame].Text = thisFrame.score1.ToString();
-                    else
-                        TextBoxes[currentFrame + 1].Text = SPARE;
-                    break;
-
-                case (false, false):
-                    if (isFirstRoll)
-                        TextBoxes[currentFrame].Text = thisFrame.score1.ToString();
-                    else
-                        TextBoxes[currentFrame + 1].Text = thisFrame.score2.ToString();
-                    break;
             }
         }
 
@@ -292,41 +283,44 @@ namespace BowlingApp
                 {
                     TextBoxes[currentFrame].Text = STRIKE;
                 }
-                if (!thisFrame.isStrike)
-                {
-                    TextBoxes[currentFrame].Text = thisFrame.score1.ToString();
-                }
+            if (!thisFrame.isStrike)
+            {
+                TextBoxes[currentFrame].Text = thisFrame.score1.ToString();
+            }
         }
 
-        //Calculates and displays scores on bottom side of scoring sheet
-        private void PopulateScoreTotals(int currentFrame)
+        //Calculates then displays scores on bottom side of scoring sheet
+        private void populateTotalScores()
         {
-            int newScore;
+            calculateCurrentTotalScore(currentFrame - 1);
+            for(int i = 0; i < LabelsBottom.Count; i++)
+            {
+                if(runningTotals[i] != -1)
+                    LabelsBottom[i].Text = runningTotals[i].ToString();
+            }
+        }
+
+        private void calculateCurrentTotalScore(int currentFrame)
+        {
+            //int newScore;
 
             Frame thisFrame = frames[currentFrame];
             Frame previousFrame = new Frame();
-            if ((currentFrame -1) >= 0)
+
+            if ((currentFrame - 1) >= 0)
                 previousFrame = frames[currentFrame - 1];
 
             if (currentFrame == -1)
                 return;
 
             //Populate score total for 11th frame (must have had two strikes on the 10th frame)
-            if(currentFrame == NEED_EXTRA_FINAL_FRAME)
+            if (currentFrame == NEED_EXTRA_FINAL_FRAME)
             {
-                if (thisFrame.isStrike)
-                {
-                    newScore = currentScoreSum() + 30 + thisFrame.score1;
-                    LabelsBottom[currentFrame - 2].Text = newScore.ToString();
-                }
-                else
-                {
-                    newScore = currentScoreSum() + 20 + thisFrame.score1;
-                    LabelsBottom[currentFrame - 2].Text = newScore.ToString();
-                }
+                if (thisFrame.isStrike) { runningTotals[currentFrame - 2] = currentScoreSum() + 30 + thisFrame.score1; }
+                else { runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1; }
                 return;
             }
-            else if(currentFrame == FINAL_FRAME) //Populate total score for final frame
+            else if (currentFrame == FINAL_FRAME) //Populate total score for final frame
             {
                 if (previousFrame.isStrike)
                 {
@@ -334,28 +328,26 @@ namespace BowlingApp
                     {
                         if (thisFrame.isSpare)
                         {
-                            newScore = currentScoreSum() + 20 + thisFrame.score1;
-                            LabelsBottom[currentFrame - 2].Text = newScore.ToString();
-                            newScore = currentScoreSum() + 20;
-                            LabelsBottom[currentFrame - 1].Text = newScore.ToString();
+                            runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1;
+                            runningTotals[currentFrame - 1] = currentScoreSum() + 20;
+                        }
+                        else if(thisFrame.isStrike)
+                        {
+                            runningTotals[currentFrame - 2] = currentScoreSum() + 30;
                         }
                         else
                         {
-                            newScore = currentScoreSum() + 20 + thisFrame.score1;
-                            LabelsBottom[currentFrame - 2].Text = newScore.ToString();
-                            newScore = currentScoreSum() + 10 + thisFrame.score1 + thisFrame.score2;
-                            LabelsBottom[currentFrame - 1].Text = newScore.ToString();
+                            runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1;
+                            runningTotals[currentFrame - -1] = currentScoreSum() + 10 + thisFrame.score1 + thisFrame.score2;
                         }
                     }
                     else if (thisFrame.isSpare)
                     {
-                        newScore = currentScoreSum() + 20;
-                        LabelsBottom[currentFrame - 1].Text = newScore.ToString();
+                        runningTotals[currentFrame - 1] = currentScoreSum() + 20;
                     }
                     else if (!thisFrame.isStrike)
                     {
-                        newScore = currentScoreSum() + 10 + thisFrame.score1 + thisFrame.score2;
-                        LabelsBottom[currentFrame - 1].Text = newScore.ToString();
+                        runningTotals[currentFrame - 1] = currentScoreSum() + 10 + thisFrame.score1 + thisFrame.score2;
                     }
 
                 }
@@ -364,89 +356,83 @@ namespace BowlingApp
                 {
                     if (thisFrame.isStrike)
                     {
-                        newScore = currentScoreSum() + 20;
-                        LabelsBottom[currentFrame - 1].Text = newScore.ToString();
+                        runningTotals[currentFrame - 1] = currentScoreSum() + 20;
                     }
                     else
                     {
-                        newScore = currentScoreSum() + 10 + thisFrame.score1;
-                        LabelsBottom[currentFrame - 1].Text = newScore.ToString();
+                        runningTotals[currentFrame - 1] = currentScoreSum() + 10 + thisFrame.score1;
                     }
                 }
                 return;
             }
 
+            //MAIN FUNCTIONALITY
             if (currentFrame - 2 >= 0)
             {
-                if(frames[currentFrame - 2].isStrike && previousFrame.isStrike)
+                if (frames[currentFrame - 2].isStrike && previousFrame.isStrike)
                 {
-                    if(thisFrame.isStrike)//three strikes (turkey)
+                    if (thisFrame.isStrike)//three strikes (turkey)
                     {
-                        newScore = currentScoreSum() + 30;
-                        LabelsBottom[currentFrame - 2].Text = newScore.ToString();
+                        runningTotals[currentFrame - 2] = currentScoreSum() + 30;
                     }
                     else if (thisFrame.isSpare)//strike and then a spare
                     {
-                        newScore = currentScoreSum() + 20;
-                        LabelsBottom[currentFrame - 1].Text = newScore.ToString();
+                        runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1;
+                        //runningTotals[currentFrame - 1] = currentScoreSum() + 20;
                     }
+                    
                     else //strike and then no spare or strike
                     {
-                        newScore = currentScoreSum() + 10 + thisFrame.score1 + thisFrame.score2;
-                        LabelsBottom[currentFrame - 1].Text = newScore.ToString();
+                        runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1;
+                        //runningTotals[currentFrame - 1] = currentScoreSum() + 10 + thisFrame.score1 + thisFrame.score2;
                     }
                 }
             }
 
             if (currentFrame - 1 >= 0)
             {
-                if(previousFrame.isStrike)
+                if (previousFrame.isStrike)
                 {
                     if (thisFrame.isSpare)//strike and then a spare
                     {
-                        newScore = currentScoreSum() + 20;
-                        LabelsBottom[currentFrame - 1].Text = newScore.ToString();
+                        runningTotals[currentFrame - 1] = currentScoreSum() + 20;
                     }
-                    else if(!thisFrame.isStrike) //strike and then no spare or strike
+                    else if (!thisFrame.isStrike) //strike and then no spare or strike
                     {
-                        newScore = currentScoreSum() + 10 + thisFrame.score1 + thisFrame.score2;
-                        LabelsBottom[currentFrame - 1].Text = newScore.ToString();
+                        runningTotals[currentFrame - 1] = currentScoreSum() + 10 + thisFrame.score1 + thisFrame.score2;
                     }
                 }
-                else if(previousFrame.isSpare)
+                else if (previousFrame.isSpare)
                 {
                     if (thisFrame.isStrike) //spare and then a strike
                     {
-                        newScore = currentScoreSum() + 20;
-                        LabelsBottom[currentFrame - 1].Text = newScore.ToString();
+                        runningTotals[currentFrame - 1] = currentScoreSum() + 20;
                     }
                     else //spare and then no strike
                     {
-                        newScore = currentScoreSum() + 10 + thisFrame.score1;
-                        LabelsBottom[currentFrame - 1].Text = newScore.ToString();
+                        runningTotals[currentFrame - 1] = currentScoreSum() + 10 + thisFrame.score1;
                     }
                 }
             }
 
             if (!thisFrame.isStrike && !thisFrame.isSpare)
             {
-                newScore = currentScoreSum() + thisFrame.score1 + thisFrame.score2;
-                LabelsBottom[currentFrame].Text = newScore.ToString();
+                runningTotals[currentFrame] = currentScoreSum() + thisFrame.score1 + thisFrame.score2;
             }
-            
-            
+
+
         }
 
         //Calculates sum of all previous scores
         private int currentScoreSum()
         {
             int runningScore = 0;
-            foreach(var lbl in LabelsBottom)
+            for(int i = 0; i < runningTotals.Length; i++)
             {
-                if (lbl.Text == "--")
+                if (runningTotals[i] == -1)
                     break;
 
-                runningScore = Int32.Parse(lbl.Text);
+                runningScore = runningTotals[i];
             }
             return runningScore;
         }
@@ -472,8 +458,8 @@ namespace BowlingApp
         {
             int firstRoll, secondRoll;
 
-            //firstRoll = Int32.Parse(txtDebug.Text);
-            firstRoll = GenerateScore(MAX_PINS);
+            firstRoll = Int32.Parse(txtDebug.Text);
+            //firstRoll = GenerateScore(MAX_PINS);
             Debug.WriteLine(firstRoll);
             if (firstRoll == MAX_PINS)
             {
