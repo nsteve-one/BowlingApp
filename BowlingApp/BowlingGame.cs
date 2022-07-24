@@ -327,43 +327,43 @@ namespace BowlingApp
             }
             else if (currentFrame == FINAL_FRAME) //Populate total score for final frame
             {
-                if (previousFrame.isStrike)
+                if (previousFrame.isStrike) //If the previous frame is strike
                 {
-                    if (frames[currentFrame - 2].isStrike)
+                    if (frames[currentFrame - 2].isStrike) //If the frame before that is a strike
                     {
-                        if (thisFrame.isStrike)
+                        if (thisFrame.isStrike) //Three strikes in a row
                         {
                             runningTotals[currentFrame - 2] = currentScoreSum() + 30;
                         }
-                        else if (thisFrame.isSpare)
+                        else if (thisFrame.isSpare) //Two strikes and a spare
                         {
                             runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1;
                             runningTotals[currentFrame - 1] = currentScoreSum() + 20;
                         }
-                        else
+                        else //Two strikes and two rolls
                         {
                             runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1;
                             runningTotals[currentFrame - -1] = currentScoreSum() + 10 + thisFrame.score1 + thisFrame.score2;
                         }
-                    }
-                    else if (thisFrame.isSpare)
+                    } //
+                    else if (thisFrame.isSpare) //strike and then a spare
                     {
                         runningTotals[currentFrame - 1] = currentScoreSum() + 20;
                     }
-                    else if (!thisFrame.isStrike)
+                    else //strike and then not a strike or spare
                     {
                         runningTotals[currentFrame - 1] = currentScoreSum() + 10 + thisFrame.score1 + thisFrame.score2;
                     }
 
                 }
 
-                if (previousFrame.isSpare)
+                if (previousFrame.isSpare) //Previous frame is a spare
                 {
-                    if (thisFrame.isStrike)
+                    if (thisFrame.isStrike) //This frame is a strike
                     {
                         runningTotals[currentFrame - 1] = currentScoreSum() + 20;
                     }
-                    else
+                    else //this frame is a strike or a spare
                     {
                         runningTotals[currentFrame - 1] = currentScoreSum() + 10 + thisFrame.score1;
                     }
@@ -372,33 +372,30 @@ namespace BowlingApp
             }
 
             //MAIN FUNCTIONALITY OF THIS FUNCTION IS BELOW
-            if (currentFrame - 2 >= 0)
+            if (currentFrame - 2 >= 0) //make sure at least two frames have been completed - Handles scores that cannot be completed immediately (Largely multiple strikes)
             {
-                if (frames[currentFrame - 2].isStrike && previousFrame.isStrike)
+                if (frames[currentFrame - 2].isStrike && previousFrame.isStrike) //Two previous frames were strikes
                 {
                     if (thisFrame.isStrike)//three strikes (turkey)
                     {
                         runningTotals[currentFrame - 2] = currentScoreSum() + 30;
                     }
-                    else if (thisFrame.isSpare)//strike and then a spare
+                    else if (thisFrame.isSpare)// two strike and then a spare
                     {
                         runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1;
-                        //runningTotals[currentFrame - 1] = currentScoreSum() + 20;
                     }
-
-                    else //strike and then no spare or strike
+                    else // two strike and then no spare or strike
                     {
                         runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1;
-                        //runningTotals[currentFrame - 1] = currentScoreSum() + 10 + thisFrame.score1 + thisFrame.score2;
                     }
                 }
             }
 
-            if (currentFrame - 1 >= 0)
+            if (currentFrame - 1 >= 0) //Make sure that at least one frame has been completed - (Strikes and spares)
             {
-                if (previousFrame.isStrike)
+                if (previousFrame.isStrike) //Last frame is a strike
                 {
-                    if (thisFrame.isSpare)//strike and then a spare
+                    if (thisFrame.isSpare) //strike and then a spare
                     {
                         runningTotals[currentFrame - 1] = currentScoreSum() + 20;
                     }
@@ -407,7 +404,7 @@ namespace BowlingApp
                         runningTotals[currentFrame - 1] = currentScoreSum() + 10 + thisFrame.score1 + thisFrame.score2;
                     }
                 }
-                else if (previousFrame.isSpare)
+                else if (previousFrame.isSpare) //last frame is a spare
                 {
                     if (thisFrame.isStrike) //spare and then a strike
                     {
@@ -420,7 +417,7 @@ namespace BowlingApp
                 }
             }
 
-            if (!thisFrame.isStrike && !thisFrame.isSpare)
+            if (!thisFrame.isStrike && !thisFrame.isSpare) //Calculate current frame if neither a strike nor a spare was rolled
             {
                 runningTotals[currentFrame] = currentScoreSum() + thisFrame.score1 + thisFrame.score2;
             }
