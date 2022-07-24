@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32616.157
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BowlingApp", "BowlingApp\BowlingApp.csproj", "{B6DF9462-C6C0-4E5E-845C-4A31BC905AEC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B6DF9462-C6C0-4E5E-845C-4A31BC905AEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6DF9462-C6C0-4E5E-845C-4A31BC905AEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6DF9462-C6C0-4E5E-845C-4A31BC905AEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6DF9462-C6C0-4E5E-845C-4A31BC905AEC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {69D1D299-40F5-41FF-8BE5-94962133F4B6}
+	EndGlobalSection
+EndGlobal
