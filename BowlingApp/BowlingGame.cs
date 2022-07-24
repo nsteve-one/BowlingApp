@@ -224,7 +224,7 @@ namespace BowlingApp
             }
         }
 
-        //Logic for displaying Frame 10 rolls
+        //Logic for displaying Frame 10 rolls (Too long so I wanted to put it in it's own function
         private void DisplayFrame10Rolls()
         {
             Frame thisFrame = frames[currentFrame];
@@ -241,22 +241,21 @@ namespace BowlingApp
                     TextBoxes[currentFrame + 1].Text = STRIKE;
                 }
             }
-
-            if (thisFrame.isSpare)
+            else if (thisFrame.isSpare)
             {
                 if (!previousFrame.isStrike)
+                {
                     TextBoxes[currentFrame + 1].Text = thisFrame.score1.ToString();
-
-                if (previousFrame.isStrike)
+                }
+                else if (previousFrame.isStrike)
                 {
                     if (isFirstRoll)
                         TextBoxes[currentFrame].Text = thisFrame.score1.ToString();
                     else
                         TextBoxes[currentFrame + 1].Text = SPARE;
                 }
-            }
-
-            if (!thisFrame.isStrike && !thisFrame.isSpare)
+            } 
+            else if (!thisFrame.isStrike && !thisFrame.isSpare)
             {
                 if (!previousFrame.isSpare)
                 {
@@ -265,7 +264,7 @@ namespace BowlingApp
                     else
                         TextBoxes[currentFrame + 1].Text = thisFrame.score2.ToString();
                 }
-                if (previousFrame.isSpare)
+                else if (previousFrame.isSpare)
                 {
                     TextBoxes[currentFrame + 1].Text = thisFrame.score1.ToString();
                 }
