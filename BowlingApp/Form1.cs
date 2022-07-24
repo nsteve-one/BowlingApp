@@ -83,7 +83,7 @@ namespace BowlingApp
                 {
                     currentFrame++;
                     isFirstRoll = true;
-                    DisplayTotalScore(currentFrame - 1);
+                    PopulateScoreTotals(currentFrame - 1);
 
                 }
                 else
@@ -98,7 +98,7 @@ namespace BowlingApp
                 PopulateRolls();
                 currentFrame++;
                 isFirstRoll = true;
-                DisplayTotalScore(currentFrame - 1);
+                PopulateScoreTotals(currentFrame - 1);
             }
             
 
@@ -266,7 +266,7 @@ namespace BowlingApp
         }
 
         //Calculates and displays scores on bottom side of scoring sheet
-        private void DisplayTotalScore(int currentFrame)
+        private void PopulateScoreTotals(int currentFrame)
         {
             int newScore;
 
