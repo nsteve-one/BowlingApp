@@ -65,6 +65,7 @@
             this.lblScore9_2 = new System.Windows.Forms.Label();
             this.lblScore10 = new System.Windows.Forms.Label();
             this.txtDebug = new System.Windows.Forms.TextBox();
+            this.lblForDebug = new System.Windows.Forms.Label();
             this.tlpScores.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -437,18 +438,30 @@
             this.txtDebug.Size = new System.Drawing.Size(200, 39);
             this.txtDebug.TabIndex = 6;
             // 
-            // Form1
+            // lblForDebug
+            // 
+            this.lblForDebug.AutoSize = true;
+            this.lblForDebug.Location = new System.Drawing.Point(56, 179);
+            this.lblForDebug.Name = "lblForDebug";
+            this.lblForDebug.Size = new System.Drawing.Size(132, 32);
+            this.lblForDebug.TabIndex = 7;
+            this.lblForDebug.Text = "For Debug:";
+            // 
+            // BowlingGame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1540, 303);
+            this.Controls.Add(this.lblForDebug);
             this.Controls.Add(this.txtDebug);
             this.Controls.Add(this.tlpScores);
             this.Controls.Add(this.lblScore);
             this.Controls.Add(this.lblCurrentRole);
             this.Controls.Add(this.lblDisplayScore);
             this.Controls.Add(this.btnBowl);
-            this.Name = "Form1";
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.Name = "BowlingGame";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tlpScores.ResumeLayout(false);
@@ -497,5 +510,6 @@
         private Label lblScore9_2;
         private Label lblScore10;
         private TextBox txtDebug;
+        private Label lblForDebug;
     }
 }

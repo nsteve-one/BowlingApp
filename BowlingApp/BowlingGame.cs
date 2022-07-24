@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Numerics;
 
 namespace BowlingApp
 {
@@ -31,7 +30,7 @@ namespace BowlingApp
 
         public int score1
         {
-            get { return _score1;}
+            get { return _score1; }
             set { _score1 = value; }
         }
 
@@ -48,7 +47,7 @@ namespace BowlingApp
             _isDone = false;
             _score1 = -1;
             _score2 = -1;
-            
+
         }
     }
 
@@ -64,7 +63,7 @@ namespace BowlingApp
 
         private int currentFrame;
         private bool isFirstRoll;
-        
+
 
         private List<Label> LabelsTop;
         private List<Label> LabelsBottom;
@@ -77,7 +76,7 @@ namespace BowlingApp
             InitializeComponent();
 
             //Labels on the top of the scoring sheet (next to Text Boxes); display initial roll
-            LabelsTop = new List<Label> { lblScore1_1,lblScore2_1, lblScore3_1, lblScore4_1, 
+            LabelsTop = new List<Label> { lblScore1_1,lblScore2_1, lblScore3_1, lblScore4_1,
                 lblScore5_1, lblScore6_1, lblScore7_1, lblScore8_1, lblScore9_1};
 
             //Text Boxes on the top of the scoring sheet; display second roll and all frame-10 rolls
@@ -119,7 +118,7 @@ namespace BowlingApp
                 {
                     currentFrame++;
                     isFirstRoll = true;
-                    populateTotalScores();
+                    PopulateTotalScores();
 
                 }
                 else
@@ -133,9 +132,9 @@ namespace BowlingApp
                 PopulateRolls();
                 currentFrame++;
                 isFirstRoll = true;
-                populateTotalScores();
+                PopulateTotalScores();
             }
-            
+
 
             //Debug.WriteLine(currentFrame);
             //Ends game after final frames)
@@ -144,12 +143,12 @@ namespace BowlingApp
                 lblDisplayScore.Text = "All Done!";
                 btnBowl.Enabled = false;
             }
-            else if (currentFrame == 11 && (!frames[currentFrame-1].isStrike || txtboxScore10_3.Text == "X"))
+            else if (currentFrame == 11 && (!frames[currentFrame - 1].isStrike || txtboxScore10_3.Text == "X"))
             {
                 lblDisplayScore.Text = "All Done!";
                 btnBowl.Enabled = false;
             }
-            else if(currentFrame >= 12)
+            else if (currentFrame >= 12)
             {
                 lblDisplayScore.Text = "All Done!";
                 btnBowl.Enabled = false;
@@ -280,9 +279,9 @@ namespace BowlingApp
 
 
             if (previousFrame.isStrike && thisFrame.isStrike)
-                {
-                    TextBoxes[currentFrame].Text = STRIKE;
-                }
+            {
+                TextBoxes[currentFrame].Text = STRIKE;
+            }
             if (!thisFrame.isStrike)
             {
                 TextBoxes[currentFrame].Text = thisFrame.score1.ToString();
@@ -290,17 +289,17 @@ namespace BowlingApp
         }
 
         //Calculates then displays scores on bottom side of scoring sheet
-        private void populateTotalScores()
+        private void PopulateTotalScores()
         {
-            calculateCurrentTotalScore(currentFrame - 1);
-            for(int i = 0; i < LabelsBottom.Count; i++)
+            CalculateCurrentTotalScore(currentFrame - 1);
+            for (int i = 0; i < LabelsBottom.Count; i++)
             {
-                if(runningTotals[i] != -1)
+                if (runningTotals[i] != -1)
                     LabelsBottom[i].Text = runningTotals[i].ToString();
             }
         }
 
-        private void calculateCurrentTotalScore(int currentFrame)
+        private void CalculateCurrentTotalScore(int currentFrame)
         {
             //int newScore;
 
@@ -316,8 +315,14 @@ namespace BowlingApp
             //Populate score total for 11th frame (must have had two strikes on the 10th frame)
             if (currentFrame == NEED_EXTRA_FINAL_FRAME)
             {
-                if (thisFrame.isStrike) { runningTotals[currentFrame - 2] = currentScoreSum() + 30 + thisFrame.score1; }
-                else { runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1; }
+                if (thisFrame.isStrike)
+                {
+                    runningTotals[currentFrame - 2] = currentScoreSum() + 30 + thisFrame.score1;
+                }
+                else
+                {
+                    runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1;
+                }
                 return;
             }
             else if (currentFrame == FINAL_FRAME) //Populate total score for final frame
@@ -326,14 +331,14 @@ namespace BowlingApp
                 {
                     if (frames[currentFrame - 2].isStrike)
                     {
-                        if (thisFrame.isSpare)
+                        if (thisFrame.isStrike)
+                        {
+                            runningTotals[currentFrame - 2] = currentScoreSum() + 30;
+                        }
+                        else if (thisFrame.isSpare)
                         {
                             runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1;
                             runningTotals[currentFrame - 1] = currentScoreSum() + 20;
-                        }
-                        else if(thisFrame.isStrike)
-                        {
-                            runningTotals[currentFrame - 2] = currentScoreSum() + 30;
                         }
                         else
                         {
@@ -366,7 +371,7 @@ namespace BowlingApp
                 return;
             }
 
-            //MAIN FUNCTIONALITY
+            //MAIN FUNCTIONALITY OF THIS FUNCTION IS BELOW
             if (currentFrame - 2 >= 0)
             {
                 if (frames[currentFrame - 2].isStrike && previousFrame.isStrike)
@@ -380,7 +385,7 @@ namespace BowlingApp
                         runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1;
                         //runningTotals[currentFrame - 1] = currentScoreSum() + 20;
                     }
-                    
+
                     else //strike and then no spare or strike
                     {
                         runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1;
@@ -427,7 +432,7 @@ namespace BowlingApp
         private int currentScoreSum()
         {
             int runningScore = 0;
-            for(int i = 0; i < runningTotals.Length; i++)
+            for (int i = 0; i < runningTotals.Length; i++)
             {
                 if (runningTotals[i] == -1)
                     break;
@@ -458,8 +463,8 @@ namespace BowlingApp
         {
             int firstRoll, secondRoll;
 
-            firstRoll = Int32.Parse(txtDebug.Text);
-            //firstRoll = GenerateScore(MAX_PINS);
+            //firstRoll = Int32.Parse(txtDebug.Text); //forDebug
+            firstRoll = GenerateScore(MAX_PINS);
             Debug.WriteLine(firstRoll);
             if (firstRoll == MAX_PINS)
             {
