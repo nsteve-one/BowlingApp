@@ -312,6 +312,11 @@ namespace BowlingApp
                             LabelsBottom[currentFrame - 1].Text = newScore.ToString();
                         }
                     }
+                    else if (thisFrame.isSpare)
+                    {
+                        newScore = currentScoreSum() + 20;
+                        LabelsBottom[currentFrame - 1].Text = newScore.ToString();
+                    }
                     else if (!thisFrame.isStrike)
                     {
                         newScore = currentScoreSum() + 10 + thisFrame.score1 + thisFrame.score2;
