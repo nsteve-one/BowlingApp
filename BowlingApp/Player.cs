@@ -16,11 +16,11 @@ namespace BowlingApp
         public Player(int playerID)
         {
             _playerID = playerID;
-            _currentFrame = 0;
+            _currentFrame = -1;
 
             _roll1 = -1; _roll2 = -1;
 
-            frames = new Frame[10];
+            frames = new Frame[12];
         }
 
         public int playerID
@@ -63,6 +63,7 @@ namespace BowlingApp
 
         public void Bowl() //Need to make logic for Bonus scores here, so I can simplify or delete the Score calculator
         {
+            _currentFrame++;
             roll1 = GenerateScore(MAX_PINS);
             Debug.WriteLine(roll1);
             if (roll1 == MAX_PINS)
@@ -85,6 +86,5 @@ namespace BowlingApp
                 frames[currentFrame].isDone = false;
             }
         }
-
     }
 }

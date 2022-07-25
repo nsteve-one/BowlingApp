@@ -1,6 +1,6 @@
 ﻿namespace BowlingApp
 {
-    partial class BowlingGame
+    partial class GameForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -66,6 +66,7 @@
             this.lblScore10 = new System.Windows.Forms.Label();
             this.txtDebug = new System.Windows.Forms.TextBox();
             this.lblForDebug = new System.Windows.Forms.Label();
+            this.txtDebug2 = new System.Windows.Forms.TextBox();
             this.tlpScores.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -447,11 +448,19 @@
             this.lblForDebug.TabIndex = 7;
             this.lblForDebug.Text = "For Debug:";
             // 
-            // BowlingGame
+            // txtDebug2
+            // 
+            this.txtDebug2.Location = new System.Drawing.Point(274, 214);
+            this.txtDebug2.Name = "txtDebug2";
+            this.txtDebug2.Size = new System.Drawing.Size(200, 39);
+            this.txtDebug2.TabIndex = 8;
+            // 
+            // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1540, 303);
+            this.Controls.Add(this.txtDebug2);
             this.Controls.Add(this.lblForDebug);
             this.Controls.Add(this.txtDebug);
             this.Controls.Add(this.tlpScores);
@@ -461,7 +470,7 @@
             this.Controls.Add(this.btnBowl);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
-            this.Name = "BowlingGame";
+            this.Name = "GameForm";
             this.Text = "Bowling Game";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tlpScores.ResumeLayout(false);
@@ -511,5 +520,6 @@
         private Label lblScore10;
         private TextBox txtDebug;
         private Label lblForDebug;
+        private TextBox txtDebug2;
     }
 }

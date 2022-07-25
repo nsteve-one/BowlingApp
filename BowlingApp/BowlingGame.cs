@@ -8,7 +8,7 @@ namespace BowlingApp
     
 
     //make calculating and populating scores different
-    public partial class BowlingGame : Form
+    public partial class GameForm : Form
     {
         private const int NINTH_FRAME = 9;
         private const int FINAL_FRAME = 10;
@@ -20,14 +20,16 @@ namespace BowlingApp
         private int currentFrame;
         private bool isFirstRoll;
 
-
         private List<Label> LabelsTop;
         private List<Label> LabelsBottom;
         private List<TextBox> TextBoxes;
         private Frame[] frames;
-        private int[] runningTotals;
-        private Random random;
-        public BowlingGame()
+
+        private Player player;
+        private ScoreCalculator scoreCalculator;
+
+
+        public GameForm()
         {
             InitializeComponent();
 
@@ -47,9 +49,10 @@ namespace BowlingApp
             currentFrame = 0;
             isFirstRoll = true;
 
-            runningTotals = new int[10];
             frames = new Frame[12];
-            random = new Random();
+
+            player = new Player(0);
+            scoreCalculator = new ScoreCalculator();
 
         }
 
@@ -59,7 +62,7 @@ namespace BowlingApp
             foreach (var lbl in LabelsTop) { lbl.Text = "--"; }
             foreach (var lbl in LabelsBottom) { lbl.Text = "--"; }
             foreach (var txtb in TextBoxes) { txtb.Text = "--"; }
-            for (int i = 0; i < runningTotals.Length; i++) { runningTotals[i] = -1; }
+            //for (int i = 0; i < runningTotals.Length; i++) { runningTotals[i] = -1; }
         }
 
         //Executed when Bowl Button is clicked
@@ -67,54 +70,107 @@ namespace BowlingApp
         {
             if (isFirstRoll)
             {
-                Roll();
-                DisplayCurrentRoll(currentFrame, isFirstRoll);
-                PopulateRolls();
-                if (frames[currentFrame].isStrike)
-                {
-                    currentFrame++;
-                    isFirstRoll = true;
-                    PopulateTotalScores();
+                player.Bowl();
+                syncFrames();
 
+                DisplayCurrentRoll();
+                PopulateRolls();
+                if (player.roll1 == MAX_PINS)
+                {
+                    PopulateTotalScores();
+                    isFirstRoll = true;
                 }
                 else
-                {
                     isFirstRoll = false;
-                }
             }
             else
             {
-                DisplayCurrentRoll(currentFrame, isFirstRoll);
+                DisplayCurrentRoll();
                 PopulateRolls();
-                currentFrame++;
-                isFirstRoll = true;
                 PopulateTotalScores();
+                isFirstRoll = true;
+
+
+                if (currentFrame == 9)
+                {
+                    if (!frames[currentFrame].isStrike && !frames[currentFrame].isSpare)
+                    {
+                        //PopulateTotalScores();
+                        lblDisplayScore.Text = "All Done!";
+                        btnBowl.Enabled = false;
+                    }
+                }
+                if (currentFrame == 10)
+                {
+                    if (!frames[currentFrame].isStrike || !frames[currentFrame - 1].isStrike)
+                    {
+                        //PopulateTotalScores();
+                        lblDisplayScore.Text = "All Done!";
+                        btnBowl.Enabled = false;
+                    }
+                }
+                else if (currentFrame == 11)
+                {
+                    //PopulateTotalScores();
+                    lblDisplayScore.Text = "All Done!";
+                    btnBowl.Enabled = false;
+                }
+                else if (currentFrame >= 12)
+                {
+                    lblDisplayScore.Text = "All Done!";
+                    btnBowl.Enabled = false;
+                }
             }
+            
 
-
-            //Debug.WriteLine(currentFrame);
+            Debug.WriteLine(currentFrame);
             //Ends game after final frames)
-            if (currentFrame == 10 && !(frames[currentFrame - 1].isSpare || frames[currentFrame - 1].isStrike))
+            if (currentFrame == 10)
             {
-                lblDisplayScore.Text = "All Done!";
-                btnBowl.Enabled = false;
+                if (!frames[currentFrame].isStrike || !frames[currentFrame-1].isStrike)
+                {
+                    PopulateTotalScores();
+                    lblDisplayScore.Text = "All Done!";
+                    btnBowl.Enabled = false;
+                }
             }
-            else if (currentFrame == 11 && (!frames[currentFrame - 1].isStrike || txtboxScore10_3.Text == "X"))
+
+        }
+
+        private void syncFrames()
+        {
+            frames = player.allFrames;
+            currentFrame = player.currentFrame;
+            scoreCalculator.setFrames(player.allFrames, currentFrame);
+        }
+
+        //Populates scores on bottom side of scoring sheet
+        private void PopulateTotalScores()
+        {
+            scoreCalculator.calculateScores();
+            for (int i = 0; i < LabelsBottom.Count; i++)
             {
-                lblDisplayScore.Text = "All Done!";
-                btnBowl.Enabled = false;
-            }
-            else if (currentFrame >= 12)
-            {
-                lblDisplayScore.Text = "All Done!";
-                btnBowl.Enabled = false;
+                if (scoreCalculator.AllCurrentFrameTotals[i] != -1)
+                {
+                    LabelsBottom[i].Text = scoreCalculator.AllCurrentFrameTotals[i].ToString();
+                }
             }
         }
 
-        //Generates random score between 0 and number passed into function
-        private int GenerateScore(int numPinsLeft)
+        //Displays current roll on label when button is pressed
+        private void DisplayCurrentRoll()
         {
-            return random.Next(0, numPinsLeft + 1);
+            if (frames[currentFrame].isStrike)
+                lblDisplayScore.Text = "Strike!";
+            else if (frames[currentFrame].isSpare && isFirstRoll)
+                lblDisplayScore.Text = frames[currentFrame].score1.ToString();
+            else if (frames[currentFrame].isSpare && !isFirstRoll)
+                lblDisplayScore.Text = "Spare!";
+            else if (isFirstRoll)
+                lblDisplayScore.Text = frames[currentFrame].score1.ToString();
+            else if (!isFirstRoll)
+                lblDisplayScore.Text = frames[currentFrame].score2.ToString();
+
         }
 
         //Displays each individual role on the top sode of the scoring sheet
@@ -148,10 +204,10 @@ namespace BowlingApp
                 case FINAL_FRAME: //Populates the rolls of the final frame
                     Frame previousFrame = frames[currentFrame - 1];
                     if (previousFrame.isSpare || previousFrame.isStrike) //only needed when a strike or a spare comes before this frame
-                        DisplayFrame10Rolls();
+                        PopulateFrame10Rolls();
                     break;
                 case NEED_EXTRA_FINAL_FRAME: //Popolates rolls for an extra frame if needed
-                    DisplayFrame11Rolls();
+                    PopulateFrame11Rolls();
                     break;
                 default: //Populates rolls for ever other frame except the ones above
                     switch ((thisFrame.isStrike, thisFrame.isSpare))
@@ -180,7 +236,7 @@ namespace BowlingApp
         }
 
         //Logic for displaying Frame 10 rolls (Too long so I wanted to put it in it's own function
-        private void DisplayFrame10Rolls()
+        private void PopulateFrame10Rolls()
         {
             Frame thisFrame = frames[currentFrame];
             Frame previousFrame = frames[currentFrame - 1];
@@ -227,7 +283,7 @@ namespace BowlingApp
         }
 
         //Logic for displaying Frame 11 rolls - Only occurs when there are two strikes on frame 10
-        private void DisplayFrame11Rolls()
+        private void PopulateFrame11Rolls()
         {
             Frame thisFrame = frames[currentFrame];
             Frame previousFrame = frames[currentFrame - 1];
@@ -243,201 +299,7 @@ namespace BowlingApp
             }
         }
 
-        //Calculates then displays scores on bottom side of scoring sheet
-        private void PopulateTotalScores()
-        {
-            CalculateCurrentTotalScore(currentFrame - 1);
-            for (int i = 0; i < LabelsBottom.Count; i++)
-            {
-                if (runningTotals[i] != -1)
-                    LabelsBottom[i].Text = runningTotals[i].ToString();
-            }
-        }
-
-        private void CalculateCurrentTotalScore(int currentFrame)
-        {
-            //int newScore;
-
-            Frame thisFrame = frames[currentFrame];
-            Frame previousFrame = new Frame();
-
-            if ((currentFrame - 1) >= 0)
-                previousFrame = frames[currentFrame - 1];
-
-            if (currentFrame == -1)
-                return;
-
-            if (currentFrame == NEED_EXTRA_FINAL_FRAME) //Populate score total for 11th frame (must have had two strikes on the 10th frame)
-            {
-                if (thisFrame.isStrike)
-                {
-                    runningTotals[currentFrame - 2] = currentScoreSum() + 30 + thisFrame.score1;
-                }
-                else
-                {
-                    runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1;
-                }
-                return;
-            }
-            else if (currentFrame == FINAL_FRAME) //Populate total score for final frame
-            {
-                if (previousFrame.isStrike) //If the previous frame is strike
-                {
-                    if (frames[currentFrame - 2].isStrike) //If the frame before that is a strike
-                    {
-                        if (thisFrame.isStrike) //Three strikes in a row
-                        {
-                            runningTotals[currentFrame - 2] = currentScoreSum() + 30;
-                        }
-                        else if (thisFrame.isSpare) //Two strikes and a spare
-                        {
-                            runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1;
-                            runningTotals[currentFrame - 1] = currentScoreSum() + 20;
-                        }
-                        else //Two strikes and two rolls
-                        {
-                            runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1;
-                            runningTotals[currentFrame - 1] = currentScoreSum() + 10 + thisFrame.score1 + thisFrame.score2;
-                        }
-                    } //
-                    else if (thisFrame.isSpare) //strike and then a spare
-                    {
-                        runningTotals[currentFrame - 1] = currentScoreSum() + 20;
-                    }
-                    else //strike and then not a strike or spare
-                    {
-                        runningTotals[currentFrame - 1] = currentScoreSum() + 10 + thisFrame.score1 + thisFrame.score2;
-                    }
-
-                }
-
-                if (previousFrame.isSpare) //Previous frame is a spare
-                {
-                    if (thisFrame.isStrike) //This frame is a strike
-                    {
-                        runningTotals[currentFrame - 1] = currentScoreSum() + 20;
-                    }
-                    else //this frame is a strike or a spare
-                    {
-                        runningTotals[currentFrame - 1] = currentScoreSum() + 10 + thisFrame.score1;
-                    }
-                }
-                return;
-            }
-
-            //MAIN FUNCTIONALITY OF THIS FUNCTION IS BELOW
-            if (currentFrame - 2 >= 0) //make sure at least two frames have been completed - Handles scores that cannot be completed immediately (Largely multiple strikes)
-            {
-                if (frames[currentFrame - 2].isStrike && previousFrame.isStrike) //Two previous frames were strikes
-                {
-                    if (thisFrame.isStrike)//three strikes (turkey)
-                    {
-                        runningTotals[currentFrame - 2] = currentScoreSum() + 30;
-                    }
-                    else if (thisFrame.isSpare)// two strike and then a spare
-                    {
-                        runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1;
-                    }
-                    else // two strike and then no spare or strike
-                    {
-                        runningTotals[currentFrame - 2] = currentScoreSum() + 20 + thisFrame.score1;
-                    }
-                }
-            }
-
-            if (currentFrame - 1 >= 0) //Make sure that at least one frame has been completed - (Strikes and spares)
-            {
-                if (previousFrame.isStrike) //Last frame is a strike
-                {
-                    if (thisFrame.isSpare) //strike and then a spare
-                    {
-                        runningTotals[currentFrame - 1] = currentScoreSum() + 20;
-                    }
-                    else if (!thisFrame.isStrike) //strike and then no spare or strike
-                    {
-                        runningTotals[currentFrame - 1] = currentScoreSum() + 10 + thisFrame.score1;
-                    }
-                }
-                else if (previousFrame.isSpare) //last frame is a spare
-                {
-                    if (thisFrame.isStrike) //spare and then a strike
-                    {
-                        runningTotals[currentFrame - 1] = currentScoreSum() + 20;
-                    }
-                    else //spare and then no strike
-                    {
-                        runningTotals[currentFrame - 1] = currentScoreSum() + 10 + thisFrame.score1;
-                    }
-                }
-            }
-
-            if (!thisFrame.isStrike && !thisFrame.isSpare) //Calculate current frame if neither a strike nor a spare was rolled
-            {
-                runningTotals[currentFrame] = currentScoreSum() + thisFrame.score1 + thisFrame.score2;
-            }
-
-
-        }
-
-        //Calculates sum of all previous scores
-        private int currentScoreSum()
-        {
-            int runningScore = 0;
-            for (int i = 0; i < runningTotals.Length; i++)
-            {
-                if (runningTotals[i] == -1)
-                    break;
-
-                runningScore = runningTotals[i];
-            }
-            return runningScore;
-        }
-
-        //Displays current roll on label when button is pressed
-        private void DisplayCurrentRoll(int frame, bool isFirstRoll)
-        {
-            if (frames[currentFrame].isStrike)
-                lblDisplayScore.Text = "Strike!";
-            else if (frames[currentFrame].isSpare && isFirstRoll)
-                lblDisplayScore.Text = frames[currentFrame].score1.ToString();
-            else if (frames[currentFrame].isSpare && !isFirstRoll)
-                lblDisplayScore.Text = "Spare!";
-            else if (isFirstRoll)
-                lblDisplayScore.Text = frames[currentFrame].score1.ToString();
-            else if (!isFirstRoll)
-                lblDisplayScore.Text = frames[currentFrame].score2.ToString();
-
-        }
-
-        //Roll's the balls and populates the frames
-        private void Roll()
-        {
-            int firstRoll, secondRoll;
-
-            //firstRoll = Int32.Parse(txtDebug.Text); //forDebug
-            firstRoll = GenerateScore(MAX_PINS);
-            Debug.WriteLine(firstRoll);
-            if (firstRoll == MAX_PINS)
-            {
-                frames[currentFrame].isStrike = true;
-                frames[currentFrame].isDone = true;
-            }
-            else
-            {
-                frames[currentFrame].score1 = firstRoll;
-                secondRoll = GenerateScore(MAX_PINS - firstRoll);
-                Debug.WriteLine(secondRoll);
-                if ((firstRoll + secondRoll) == MAX_PINS)
-                {
-                    frames[currentFrame].isSpare = true;
-                }
-                else
-                {
-                    frames[currentFrame].score2 = secondRoll;
-                }
-                frames[currentFrame].isDone = false;
-            }
-        }
+        
 
     }
 }
