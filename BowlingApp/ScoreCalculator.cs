@@ -92,7 +92,7 @@ namespace BowlingApp
             {
                 if (thisFrame.isStrike)
                 {
-                    _totalPerFrame[_currentFrame - 2] = getCurrentTotalScore() + 30 + thisFrame.score1;
+                    _totalPerFrame[_currentFrame - 2] = getCurrentTotalScore() + 30;
                 }
                 else
                 {

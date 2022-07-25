@@ -115,11 +115,6 @@ namespace BowlingApp
                     lblDisplayScore.Text = "All Done!";
                     btnBowl.Enabled = false;
                 }
-                else if (currentFrame >= 12)
-                {
-                    lblDisplayScore.Text = "All Done!";
-                    btnBowl.Enabled = false;
-                }
             }
             
 
@@ -133,6 +128,11 @@ namespace BowlingApp
                     lblDisplayScore.Text = "All Done!";
                     btnBowl.Enabled = false;
                 }
+            }
+            else if (currentFrame == 11)
+            {
+                lblDisplayScore.Text = "All Done!";
+                btnBowl.Enabled = false;
             }
 
         }
