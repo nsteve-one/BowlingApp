@@ -10,6 +10,9 @@ namespace BowlingApp
         private int _playerID;
         private int _currentFrame;
         private int _roll1, _roll2;
+        private int _debugRoll1, _debugRoll2;
+
+        private bool enableDebug;
 
         private Frame[] frames;
 
@@ -19,6 +22,8 @@ namespace BowlingApp
             _currentFrame = -1;
 
             _roll1 = -1; _roll2 = -1;
+
+            enableDebug = false;
 
             frames = new Frame[12];
         }
@@ -55,6 +60,18 @@ namespace BowlingApp
             _currentFrame++;
         }
 
+        public void EnablePlayerDebug(int debugRoll1, int debugRoll2)
+        {
+            enableDebug = true;
+            _debugRoll1 = debugRoll1;
+            _debugRoll2 = debugRoll2;
+        }
+
+        public void DisablePlayerDebug()
+        {
+            enableDebug = false;
+        }
+
         private int GenerateScore(int numPinsLeft)
         {
             Random random = new Random();
@@ -63,6 +80,33 @@ namespace BowlingApp
 
         public void Bowl() //Need to make logic for Bonus scores here, so I can simplify or delete the Score calculator
         {
+            if(enableDebug) //Debug Mode
+            {
+                _currentFrame++;
+                roll1 = _debugRoll1;
+                Debug.WriteLine(roll1);
+                if (roll1 == MAX_PINS)
+                {
+                    frames[currentFrame].score1 = 10;
+                    frames[currentFrame].isStrike = true;
+                    frames[currentFrame].isDone = true;
+                }
+                else
+                {
+                    frames[currentFrame].score1 = roll1;
+                    roll2 = _debugRoll2;
+                    Debug.WriteLine(roll2);
+                    if ((roll1 + roll2) == MAX_PINS)
+                    {
+                        frames[currentFrame].isSpare = true;
+                    }
+
+                    frames[currentFrame].score2 = roll2;
+                    frames[currentFrame].isDone = false;
+                }
+                return;
+            }
+
             _currentFrame++;
             roll1 = GenerateScore(MAX_PINS);
             Debug.WriteLine(roll1);

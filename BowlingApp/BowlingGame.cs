@@ -1,12 +1,36 @@
 using System.Diagnostics;
 
+//Code by Noah Stevens
+
+//DONE:
+/* - A game will consist of 10 “frames” of play
+ * - The user (me) will click a button/something which will result in me getting a score 
+ * - Each frame, the maximum number of pins I can knock down is 10 between two balls I will throw. 
+ *     If I get a 10 on the first ball, I don’t need to roll a second ball for the frame.
+ * - On the 10th and final frame, if between the two balls I throw I get 10 pins, I get a bonus ball for extra points.
+ * - Each time a frame is completed, update on the screen my total score so I can see how I am doing.
+ * - When the game is complete, give me the option to start a new game which will reset the score and allow me to play again.
+ * OPTIONAL DONE:
+ * - Treat scoring like traditional bowling using spares and strikes (Needs some refactoring)
+ * - Treat the 10th and final frame like traditional bowling (needs some refactoring)
+ * - Debug mode lets you choose each frame (need try/catch!!!)
+ */
+
+//TO DO:
+/* Would like to:
+ * - Multiple players
+ * - Multiple games with multiple players
+ * 
+ * Optional:
+ * - Create something in the UI to let me see my score for each frame, and maybe if I want to change the score for a frame give me that option.
+ * -Save my high score (in any way you would like) and have it displayed for me on the screen so I know what I am trying to beat!
+ * -Give me a cheater button, so no matter what I roll it will always be a strike (so I can test logic for a 300 score)
+ * -Give me a loser button, so no matter what I roll it will always be a 0 (so I can test logic for someone who clearly needs to play bumper bowling)
+ * 
+ */
+
 namespace BowlingApp
 {
-    //missing a class called player and game
-
-    //Holds the scores for each frame
-    
-
     //make calculating and populating scores different
     public partial class GameForm : Form
     {
@@ -59,17 +83,51 @@ namespace BowlingApp
         //Fills in each label and textbox with "--" and also sets the runningTotals array
         private void Form1_Load(object sender, EventArgs e)
         {
+            ResetAllText();
+        }
+
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            ResetGame();
+        }
+
+        private void ResetAllText()
+        {
+            lblDisplayScore.Text = "--";
             foreach (var lbl in LabelsTop) { lbl.Text = "--"; }
             foreach (var lbl in LabelsBottom) { lbl.Text = "--"; }
             foreach (var txtb in TextBoxes) { txtb.Text = "--"; }
-            //for (int i = 0; i < runningTotals.Length; i++) { runningTotals[i] = -1; }
+        }
+
+        private void ResetGame()
+        {
+            ResetAllText();
+            currentFrame = 0;
+            isFirstRoll = true;
+
+            frames = new Frame[12];
+
+            player = new Player(0);
+            scoreCalculator.ResetTotalPerFrame();
+
+            btnBowl.Enabled = true;
         }
 
         //Executed when Bowl Button is clicked
         private void btnBowl_Click(object sender, EventArgs e)
         {
+            Play();
+        }
+
+        private void Play()
+        {
             if (isFirstRoll)
             {
+                if (cBoxEnableDebug.Checked)
+                    player.EnablePlayerDebug(Int32.Parse(txtDebug.Text), Int32.Parse(txtDebug2.Text));
+                else
+                    player.DisablePlayerDebug();
+
                 player.Bowl();
                 syncFrames();
 
@@ -89,40 +147,44 @@ namespace BowlingApp
                 PopulateRolls();
                 PopulateTotalScores();
                 isFirstRoll = true;
+            }
+            if (currentFrame >= 9)
+                checkEndGame();
+        }
 
-
+        //Ends game after final frames)
+        private void checkEndGame() // <----- NEEDS REFACTORED A MESS ----------
+         {
+            if (isFirstRoll)
+            {
                 if (currentFrame == 9)
                 {
                     if (!frames[currentFrame].isStrike && !frames[currentFrame].isSpare)
                     {
-                        //PopulateTotalScores();
                         lblDisplayScore.Text = "All Done!";
                         btnBowl.Enabled = false;
                     }
                 }
-                if (currentFrame == 10)
+                else if (currentFrame == 10)
                 {
-                    if (!frames[currentFrame].isStrike || !frames[currentFrame - 1].isStrike)
+                    if ((!frames[currentFrame].isStrike || !frames[currentFrame - 1].isStrike) )
                     {
-                        //PopulateTotalScores();
+                        if ((!frames[currentFrame].isSpare || !frames[currentFrame].isSpare) && (!frames[currentFrame - 1].isStrike) && !frames[currentFrame].isStrike)
+                            PopulateTotalScores();
+
                         lblDisplayScore.Text = "All Done!";
                         btnBowl.Enabled = false;
                     }
                 }
                 else if (currentFrame == 11)
                 {
-                    //PopulateTotalScores();
                     lblDisplayScore.Text = "All Done!";
                     btnBowl.Enabled = false;
                 }
             }
-            
-
-            Debug.WriteLine(currentFrame);
-            //Ends game after final frames)
             if (currentFrame == 10)
             {
-                if (!frames[currentFrame].isStrike || !frames[currentFrame-1].isStrike)
+                if (frames[currentFrame - 1].isSpare && !frames[currentFrame].isStrike)
                 {
                     PopulateTotalScores();
                     lblDisplayScore.Text = "All Done!";
@@ -131,10 +193,19 @@ namespace BowlingApp
             }
             else if (currentFrame == 11)
             {
-                lblDisplayScore.Text = "All Done!";
-                btnBowl.Enabled = false;
+                if(frames[currentFrame].isStrike)
+                {
+                    lblDisplayScore.Text = "All Done!";
+                    btnBowl.Enabled = false;
+                }
+                else 
+                {
+                    PopulateTotalScores();
+                    lblDisplayScore.Text = "All Done!";
+                    btnBowl.Enabled = false;
+                }
+                
             }
-
         }
 
         private void syncFrames()
@@ -298,8 +369,5 @@ namespace BowlingApp
                 TextBoxes[currentFrame].Text = thisFrame.score1.ToString();
             }
         }
-
-        
-
     }
 }

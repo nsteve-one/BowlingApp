@@ -30,7 +30,7 @@ namespace BowlingApp
             _currentFrame = currentFrame;
         }
 
-        private void ResetTotalPerFrame()
+        public void ResetTotalPerFrame()
         {
             for(int i = 0; i < _totalPerFrame.Length; i++)
             {

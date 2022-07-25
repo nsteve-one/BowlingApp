@@ -67,6 +67,8 @@
             this.txtDebug = new System.Windows.Forms.TextBox();
             this.lblForDebug = new System.Windows.Forms.Label();
             this.txtDebug2 = new System.Windows.Forms.TextBox();
+            this.btnReset = new System.Windows.Forms.Button();
+            this.cBoxEnableDebug = new System.Windows.Forms.CheckBox();
             this.tlpScores.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -434,7 +436,7 @@
             // 
             // txtDebug
             // 
-            this.txtDebug.Location = new System.Drawing.Point(56, 214);
+            this.txtDebug.Location = new System.Drawing.Point(41, 241);
             this.txtDebug.Name = "txtDebug";
             this.txtDebug.Size = new System.Drawing.Size(200, 39);
             this.txtDebug.TabIndex = 6;
@@ -442,7 +444,7 @@
             // lblForDebug
             // 
             this.lblForDebug.AutoSize = true;
-            this.lblForDebug.Location = new System.Drawing.Point(56, 179);
+            this.lblForDebug.Location = new System.Drawing.Point(41, 162);
             this.lblForDebug.Name = "lblForDebug";
             this.lblForDebug.Size = new System.Drawing.Size(132, 32);
             this.lblForDebug.TabIndex = 7;
@@ -450,16 +452,38 @@
             // 
             // txtDebug2
             // 
-            this.txtDebug2.Location = new System.Drawing.Point(274, 214);
+            this.txtDebug2.Location = new System.Drawing.Point(248, 241);
             this.txtDebug2.Name = "txtDebug2";
             this.txtDebug2.Size = new System.Drawing.Size(200, 39);
             this.txtDebug2.TabIndex = 8;
+            // 
+            // btnReset
+            // 
+            this.btnReset.Location = new System.Drawing.Point(1361, 241);
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Size = new System.Drawing.Size(150, 46);
+            this.btnReset.TabIndex = 9;
+            this.btnReset.Text = "Reset";
+            this.btnReset.UseVisualStyleBackColor = true;
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
+            // 
+            // cBoxEnableDebug
+            // 
+            this.cBoxEnableDebug.AutoSize = true;
+            this.cBoxEnableDebug.Location = new System.Drawing.Point(41, 197);
+            this.cBoxEnableDebug.Name = "cBoxEnableDebug";
+            this.cBoxEnableDebug.Size = new System.Drawing.Size(117, 36);
+            this.cBoxEnableDebug.TabIndex = 10;
+            this.cBoxEnableDebug.Text = "Enable";
+            this.cBoxEnableDebug.UseVisualStyleBackColor = true;
             // 
             // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1540, 303);
+            this.Controls.Add(this.cBoxEnableDebug);
+            this.Controls.Add(this.btnReset);
             this.Controls.Add(this.txtDebug2);
             this.Controls.Add(this.lblForDebug);
             this.Controls.Add(this.txtDebug);
@@ -521,5 +545,7 @@
         private TextBox txtDebug;
         private Label lblForDebug;
         private TextBox txtDebug2;
+        private Button btnReset;
+        private CheckBox cBoxEnableDebug;
     }
 }
