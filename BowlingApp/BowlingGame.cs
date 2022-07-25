@@ -16,6 +16,8 @@ using System.Diagnostics;
  * - Debug mode lets you choose each frame (need try/catch!!!)
  */
 
+//NEED TO MAKE TEST CASES!!!!
+
 //TO DO:
 /* Would like to:
  * - Multiple players
